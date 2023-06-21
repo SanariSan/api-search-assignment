@@ -16,15 +16,14 @@ const ResultsComponent: FC<TResultsComponent> = ({ entities }) => {
   ];
 
   return (
-    <SimpleGrid
-      minChildWidth={'200px'}
-      spacingX="20px"
-      spacingY={'20px'}
+    <Flex
+      flexWrap={'wrap'}
       w={'100%'}
       h={'100%'}
+      alignItems={'flex-start'}
+      justifyContent={'center'}
       p={5}
-      gap={3}
-      gridTemplateColumns={'repeat(auto-fill, minmax(200px, 1fr))'}
+      gap={5}
     >
       {entities.map((entity) => (
         <Flex
@@ -56,7 +55,7 @@ const ResultsComponent: FC<TResultsComponent> = ({ entities }) => {
           />
         </Flex>
       ))}
-    </SimpleGrid>
+    </Flex>
   );
 };
 

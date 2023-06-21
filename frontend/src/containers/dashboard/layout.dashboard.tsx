@@ -17,7 +17,7 @@ const DashboardLayoutContainer: FC<TDashboardLayout> = () => {
       h={'100%'}
       maxH={'100%'}
       w={'100%'}
-      templateRows={'minmax(375px, 2fr) minmax(175px, 1fr)'}
+      templateRows={'minmax(375px, 2fr) minmax(225px, 1fr)'}
       templateColumns={{
         base: '1fr',
       }}
@@ -36,6 +36,7 @@ const DashboardLayoutContainer: FC<TDashboardLayout> = () => {
         borderWidth={'2px'}
         borderStyle={'dashed'}
         borderColor={border}
+        minW={'375px'}
       >
         <Box overflow={'hidden'} position={'relative'} w={'100%'} h={'100%'}>
           <ThemeToggleContainerMemo />
@@ -43,13 +44,7 @@ const DashboardLayoutContainer: FC<TDashboardLayout> = () => {
         </Box>
       </GridItem>
 
-      <GridItem
-        area={'results'}
-        bg={bg}
-        position={'relative'}
-        overflowY={'auto'}
-        overflowX={'hidden'}
-      >
+      <GridItem area={'results'} bg={bg} position={'relative'} overflow={'hidden'} minW={'375px'}>
         <Box overflow={'hidden'} position={'relative'} w={'100%'} h={'100%'}>
           <ResultsContainerMemo />
         </Box>
