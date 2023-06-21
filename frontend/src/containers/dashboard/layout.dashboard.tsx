@@ -6,14 +6,17 @@ import { SearchContainerMemo } from '../search';
 import type { TDashboardLayout } from './layout.dashboard.type';
 
 const DashboardLayoutContainer: FC<TDashboardLayout> = () => {
-  const [bg] = [useColorModeValue(COLORS.whatsapp.bgLight, COLORS.whatsapp.bgDark)];
+  const [bg, border] = [
+    useColorModeValue(COLORS.whatsapp.bgLight, COLORS.whatsapp.bgDark),
+    useColorModeValue(COLORS.whatsapp.activeLight, COLORS.whatsapp.activeDark),
+  ];
 
   return (
     <Grid
       h={'100%'}
       maxH={'100%'}
       w={'100%'}
-      templateRows={'2fr 1fr'}
+      templateRows={'minmax(350px, 2fr) minmax(175px, 1fr)'}
       templateColumns={{
         base: '1fr',
       }}
@@ -21,6 +24,7 @@ const DashboardLayoutContainer: FC<TDashboardLayout> = () => {
       "search"
       "results"
       `}
+      overflowY={'auto'}
     >
       <GridItem
         area={'search'}
@@ -28,6 +32,9 @@ const DashboardLayoutContainer: FC<TDashboardLayout> = () => {
         position={'relative'}
         overflowY={'auto'}
         overflowX={'hidden'}
+        borderWidth={'2px'}
+        borderStyle={'dashed'}
+        borderColor={border}
       >
         <Box overflow={'hidden'} position={'relative'} w={'100%'} h={'100%'}>
           <SearchContainerMemo />

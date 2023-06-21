@@ -23,10 +23,14 @@ const entitiesSlice = createSlice({
       state,
       action: { payload: Partial<Exclude<TEntities[number], undefined>> },
     ) {},
+    searchEntitiesV2Async(
+      state,
+      action: { payload: Partial<Exclude<TEntities[number], undefined>> },
+    ) {},
   },
 });
 
 const entities = entitiesSlice.reducer;
-const { setEntities, searchEntitiesAsync } = entitiesSlice.actions;
+const { setEntities, searchEntitiesAsync, searchEntitiesV2Async } = entitiesSlice.actions;
 
-export { entities, searchEntitiesAsync, setEntities };
+export { entities, searchEntitiesAsync, setEntities, searchEntitiesV2Async };

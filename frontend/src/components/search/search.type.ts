@@ -8,6 +8,9 @@ type TSearchComponent = {
 } & {
   isLoading: boolean;
   handleSubmit: FormEventHandler<HTMLFormElement>;
+  title: string;
+  description: string;
+  onChangeVersion: () => void;
 };
 
 export type { TSearchComponent };

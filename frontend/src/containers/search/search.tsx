@@ -4,7 +4,11 @@ import type { FC } from 'react';
 import { memo, useCallback, useState } from 'react';
 import { DELIM, SearchComponentMemo } from '../../components/search';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { loadingSearchEntitiesSelector, searchEntitiesAsync } from '../../store';
+import {
+  loadingSearchEntitiesSelector,
+  searchEntitiesAsync,
+  searchEntitiesV2Async,
+} from '../../store';
 import { FormControlContainerMemo } from '../form-control';
 import type { TSearchFormValues } from './search.const';
 import { VALIDATION_SCHEMA } from './search.const';
@@ -16,13 +20,18 @@ type TSearchContainer = {
 const SearchContainer: FC<TSearchContainer> = () => {
   const searchEntitiesLoadingState = useAppSelector(loadingSearchEntitiesSelector);
   const dispatch = useAppDispatch();
+  const [currentVersion, setCurrentVersion] = useState<'v1' | 'v2'>('v1');
 
   const [formValues] = useState<TSearchFormValues>({
     email: 'jams@gmail.com',
     number: '',
   });
 
-  const onSubmit = useCallback(
+  const changeVersionCb = useCallback(() => {
+    setCurrentVersion((s) => (s === 'v1' ? 'v2' : 'v1'));
+  }, []);
+
+  const submitCb = useCallback(
     (values: TSearchFormValues, actions: FormikHelpers<TSearchFormValues>) => {
       const { email, number } = values;
       const sanitizedNumber =
@@ -30,24 +39,33 @@ const SearchContainer: FC<TSearchContainer> = () => {
           ? number.replace(new RegExp(`${DELIM}`, 'g'), '')
           : undefined;
 
-      console.log(email, number, sanitizedNumber);
-      void dispatch(searchEntitiesAsync({ email, number: sanitizedNumber }));
+      const payload = { email, number: sanitizedNumber };
+      void dispatch(
+        currentVersion === 'v1' ? searchEntitiesAsync(payload) : searchEntitiesV2Async(payload),
+      );
     },
-    [dispatch],
+    [dispatch, currentVersion],
   );
 
   return (
     <Formik
       initialValues={formValues}
       validationSchema={VALIDATION_SCHEMA}
-      onSubmit={onSubmit}
+      onSubmit={submitCb}
       validateOnChange={true}
       validateOnBlur={true}
     >
       {(formikConfig) => (
         <>
           <SearchComponentMemo
-            isLoading={searchEntitiesLoadingState === 'loading'}
+            isLoading={false}
+            title={currentVersion === 'v1' ? 'Entities search (v1)' : 'Entities search (v2)'}
+            description={
+              currentVersion === 'v1'
+                ? 'This version implies server-side abort on resend'
+                : 'This version implies client-side debounce with saga'
+            }
+            onChangeVersion={changeVersionCb}
             {...formikConfig}
           />
           <FormControlContainerMemo isLoading={searchEntitiesLoadingState === 'loading'} />

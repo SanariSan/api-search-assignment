@@ -1,4 +1,4 @@
-import { call, cancelled, put, takeEvery } from 'redux-saga/effects';
+import { call, cancelled, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { ELOG_LEVEL } from '../../../general.type';
 import type { TSafeReturn } from '../../../helpers/sagas';
 import { safe } from '../../../helpers/sagas';
@@ -12,71 +12,13 @@ import type {
 } from '../../../services/api/dto/entities';
 import { EntitiesSearchOutgoingDTO } from '../../../services/api/dto/entities';
 import type { TEntities } from '../../slices';
-import { searchEntitiesAsync, setEntities, setSearchEntitiesLoadingStatus } from '../../slices';
-
-// function* requestWorker<TOutgoingFields, TIncomingSuccessFields, TIncomingFailureFields>({
-//   setLoadingStatus,
-//   OutgoingDTO,
-//   payload,
-//   fetchCb,
-//   signal,
-// }) {
-//   yield put(setLoadingStatus({ status: 'loading' }));
-
-//   const validateStatus = (yield safe(
-//     call(validateDTO, {
-//       schema: OutgoingDTO,
-//       value: payload,
-//     }),
-//   )) as TSafeReturn<TOutgoingFields>;
-
-//   if (validateStatus.error !== undefined) {
-//     yield put(setLoadingStatus({ status: 'failure' }));
-//     return;
-//   }
-
-//   const fetchStatus = (yield safe(
-//     call(fetchCb, {
-//       dto: validateStatus.response,
-//       abortSignal: signal,
-//     }),
-//   )) as TSafeReturn<{
-//     success?: TIncomingSuccessFields;
-//     failure?: TIncomingFailureFields;
-//   }>;
-
-//   if (fetchStatus.error !== undefined) {
-//     if (fetchStatus.error instanceof AbortError) {
-//       publishError(ELOG_LEVEL.DEBUG, fetchStatus.error);
-//       return;
-//     }
-
-//     yield put(
-//       setLoadingStatus({
-//         status: 'failure',
-//         message: String(fetchStatus.error.message),
-//       }),
-//     );
-//     return;
-//   }
-
-//   if (fetchStatus.response.success !== undefined) {
-//     yield put(setLoadingStatus({ status: 'success' }));
-
-//     // yield put(setEntities({ entities: fetchStatus.response.success.data.entities }));
-//     return;
-//   }
-
-//   if (fetchStatus.response.failure !== undefined) {
-//     yield put(
-//       setLoadingStatus({
-//         status: 'failure',
-//         message: String(fetchStatus.response.failure.detail),
-//       }),
-//     );
-//     return;
-//   }
-// }
+import {
+  searchEntitiesAsync,
+  searchEntitiesV2Async,
+  setEntities,
+  setSearchEntitiesLoadingStatus,
+  setWarningMessageUi,
+} from '../../slices';
 
 function* searchWorker(action: {
   payload: Partial<Exclude<TEntities[number], undefined>>;
@@ -111,8 +53,15 @@ function* searchWorker(action: {
     publishLog(ELOG_LEVEL.DEBUG, fetchStatus);
 
     if (fetchStatus.error !== undefined) {
+      // this triggers on MANUAL AbortController cancel (not used in this example)
       if (fetchStatus.error instanceof AbortError) {
         publishError(ELOG_LEVEL.DEBUG, fetchStatus.error);
+        yield put(
+          setWarningMessageUi({
+            title: 'Aborted on CLIENT',
+            description: 'Previous request was aborted',
+          }),
+        );
         return;
       }
 
@@ -126,12 +75,27 @@ function* searchWorker(action: {
     }
 
     if (fetchStatus.response.success !== undefined) {
-      yield put(setSearchEntitiesLoadingStatus({ status: 'success' }));
+      yield put(
+        setSearchEntitiesLoadingStatus({
+          status: 'success',
+          message: 'Received response successfully',
+        }),
+      );
       yield put(setEntities({ entities: fetchStatus.response.success.data.entities }));
       return;
     }
 
     if (fetchStatus.response.failure !== undefined) {
+      if (fetchStatus.response.failure.type === 3005) {
+        yield put(
+          setWarningMessageUi({
+            title: 'Aborted on SERVER',
+            description: 'Previous request was aborted',
+          }),
+        );
+        return;
+      }
+
       yield put(
         setSearchEntitiesLoadingStatus({
           status: 'failure',
@@ -141,7 +105,14 @@ function* searchWorker(action: {
       return;
     }
   } finally {
+    // this triggers AUTOMATICALLY by saga on subsequent calls with takeLatest
     if ((yield cancelled()) as boolean) {
+      yield put(
+        setWarningMessageUi({
+          title: 'Aborted on CLIENT',
+          description: 'Previous request was aborted',
+        }),
+      );
       abortController.abort();
     }
   }
@@ -149,7 +120,7 @@ function* searchWorker(action: {
 
 function* searchWatcher() {
   yield takeEvery([searchEntitiesAsync], searchWorker);
-  // yield takeLatest([searchEntityV2Async], searchV2Worker);
+  yield takeLatest([searchEntitiesV2Async], searchWorker);
 }
 
 export { searchWatcher };

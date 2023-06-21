@@ -7,7 +7,13 @@ import { COLORS } from '../../chakra-setup';
 import type { TSearchComponent } from './search.type';
 import { PHONE_NUMBER_MASK } from './search.const';
 
-const SearchComponent: FC<TSearchComponent> = ({ isLoading, ...rest }) => {
+const SearchComponent: FC<TSearchComponent> = ({
+  isLoading,
+  title,
+  description,
+  onChangeVersion,
+  ...rest
+}) => {
   const { handleSubmit, errors, touched, handleChange } = rest;
   const [btnColor, errorMsg, inactive, active] = [
     useColorModeValue(COLORS.blue[800], COLORS.darkBlue[600]),
@@ -33,7 +39,8 @@ const SearchComponent: FC<TSearchComponent> = ({ isLoading, ...rest }) => {
           justifyContent={'center'}
           gap={5}
         >
-          <Text variant={'xxxl'}>Entities search</Text>
+          <Text variant={'xxxl'}>{title}</Text>
+          <Text variant={'sm'}>{description}</Text>
 
           <Flex direction={'column'} alignItems={'flex-start'} gap={3} w={'100%'}>
             <Text fontWeight={'bold'} variant={'md'}>
@@ -107,6 +114,20 @@ const SearchComponent: FC<TSearchComponent> = ({ isLoading, ...rest }) => {
               isDisabled={isLoading}
             >
               {isLoading ? 'Loading...' : 'Search'}
+            </Button>
+            <Button
+              type={'button'}
+              onClick={onChangeVersion}
+              colorScheme={'whatsapp'}
+              size={{ base: 'sm', sm: 'md' }}
+              color={btnColor}
+              opacity={1}
+              _disabled={{
+                opacity: 0.5,
+              }}
+              isDisabled={isLoading}
+            >
+              {'Change version'}
             </Button>
           </Flex>
         </Flex>
