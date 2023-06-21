@@ -27,6 +27,10 @@ class Sub {
   public removeListener(cb: ({ channel, logLevel, message }: IPublishEntity) => void) {
     this.sub.removeListener('message', cb);
   }
+
+  public removeAllListeners() {
+    this.sub.removeAllListeners('message');
+  }
 }
 
 export { Sub };
