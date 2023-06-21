@@ -17,7 +17,7 @@ WORKDIR /home/node/proj
 COPY --chown=node:node --from=build /usr/local/bin/dumb-init /usr/local/bin/dumb-init
 COPY --chown=node:node --from=build /home/node/proj/dist ./dist
 COPY --chown=node:node --from=prod_modules /home/node/proj/node_modules ./node_modules
-COPY --chown=node:node catalogue.json ./
+COPY --chown=node:node entities.json ./
 COPY --chown=node:node package.json ./
 COPY --chown=node:node .env ./
 USER node

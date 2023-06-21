@@ -1,5 +1,0 @@
-packages-offline-cache/**/*
-run.hint.sh
-ignore
-node_modules
-.wakatime-project

@@ -1,2 +1,2 @@
-export * from './login';
-export * from './logout';
+export * from './entity';
+export * from './entity-v2';
