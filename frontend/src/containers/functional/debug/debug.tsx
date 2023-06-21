@@ -3,30 +3,26 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { useScreenDetails } from '../../../hooks/use-screen-details';
 import { useMousePos } from '../../../hooks/use-mouse-pos';
-import {
-  setScreenDetailsUi,
-  uiErrorSelector,
-  userAuthIsAuthenticatedSelector,
-} from '../../../store';
+import { setScreenDetailsUi, uiErrorSelector } from '../../../store';
 import { publishLog } from '../../../modules/access-layer/events/pubsub';
 import { ELOG_LEVEL } from '../../../general.type';
 
 const DebugContainer: FC = () => {
   const d = useAppDispatch();
-  const {
-    screenResolutionDetails: {
-      default: { w, h },
-    },
-  } = useScreenDetails();
+  // const {
+  //   screenResolutionDetails: {
+  //     default: { w, h },
+  //   },
+  // } = useScreenDetails();
 
-  const { x, y } = useMousePos();
+  // const { x, y } = useMousePos();
 
-  useEffect(() => {
-    publishLog(ELOG_LEVEL.DEBUG, { w, h });
-    void d(setScreenDetailsUi({ w, h }));
-  }, [w, h, d]);
+  // useEffect(() => {
+  //   publishLog(ELOG_LEVEL.DEBUG, { w, h });
+  //   void d(setScreenDetailsUi({ w, h }));
+  // }, [w, h, d]);
 
-  const isAuthenticated = useAppSelector(userAuthIsAuthenticatedSelector);
+  // const isAuthenticated = useAppSelector(userAuthIsAuthenticatedSelector);
   const msg = useAppSelector(uiErrorSelector);
   // useEffect(() => {
   //   console.log(`isAuthenticated ${isAuthenticated} = ${Date.now()}`);
@@ -47,7 +43,7 @@ const DebugContainer: FC = () => {
       >
         {/* Current page size - {`${w} x ${h}`} */}
         {/* {`${x} : ${y} : ${w} : ${h} : ${(x / w) * 100}`} */}
-        {`${JSON.stringify({ isAuthenticated, msg })}`}
+        {/* {`${JSON.stringify({ isAuthenticated, msg })}`} */}
       </pre>
       <textarea
         readOnly

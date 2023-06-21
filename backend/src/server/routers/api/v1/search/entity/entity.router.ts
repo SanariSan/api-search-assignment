@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { accessLoginCTR } from '../../../../../controllers';
+import { searchEntityCTR } from '../../../../../controllers';
 import {
   asyncHandleMW,
   EVALIDATION_TARGET,
@@ -9,10 +9,10 @@ import { SCHEME_SEARCH } from '../../../../../schemes';
 
 const entityR = Router();
 
-entityR.post(
+entityR.get(
   '/entity',
-  asyncHandleMW(validateBySchemaAsyncMW(SCHEME_SEARCH.login, EVALIDATION_TARGET.BODY)),
-  asyncHandleMW(accessLoginCTR),
+  asyncHandleMW(validateBySchemaAsyncMW(SCHEME_SEARCH.entity, EVALIDATION_TARGET.QUERY)),
+  asyncHandleMW(searchEntityCTR),
 );
 
 export { entityR };

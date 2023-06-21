@@ -18,7 +18,6 @@ type TUiInitState = {
     w: number;
     h: number;
   };
-  selectedContactIdx: number;
 };
 
 export type { TMessage, TUiInitState };

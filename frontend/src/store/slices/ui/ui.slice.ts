@@ -44,17 +44,6 @@ const uiSlice = createSlice({
     setScreenDetailsUi(state, action: { payload: { w: number; h: number } }) {
       state.screenDetails = action.payload;
     },
-    setSelectedContactIdxUi(
-      state,
-      action: {
-        payload: {
-          contactIdx: number;
-        };
-        type: string;
-      },
-    ) {
-      state.selectedContactIdx = action.payload.contactIdx;
-    },
   },
 });
 
@@ -71,7 +60,6 @@ const {
   setColorModeToggleCoordsUi,
   setIsMobileUi,
   setScreenDetailsUi,
-  setSelectedContactIdxUi,
 } = uiSlice.actions;
 
 export {
@@ -87,5 +75,4 @@ export {
   finalizeColorModeChangeUi,
   setIsMobileUi,
   setScreenDetailsUi,
-  setSelectedContactIdxUi,
 };

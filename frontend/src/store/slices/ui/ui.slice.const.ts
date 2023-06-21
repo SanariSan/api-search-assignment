@@ -18,7 +18,6 @@ const UI_INIT_STATE: TUiInitState = {
     w: 0,
     h: 0,
   },
-  selectedContactIdx: -1,
 };
 
 export { UI_INIT_STATE };

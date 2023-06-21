@@ -3,56 +3,30 @@ import { ELOG_LEVEL } from '../../../../general.type';
 import type { TSafeReturn } from '../../../../helpers/sagas';
 import { safe } from '../../../../helpers/sagas';
 import { publishError, publishLog } from '../../../../modules/access-layer/events/pubsub';
+import { AbortError } from '../../../../services';
 import type {
-  TAccessCheckSessionIncomingFailureFields,
-  TAccessCheckSessionIncomingSuccessFields,
-  TAccessCheckSessionOutgoingFields,
+  TAccessSessionInitIncomingFailureFields,
+  TAccessSessionInitIncomingSuccessFields,
 } from '../../../../services/api';
+import { obtainSession } from '../../../../services/api';
 import {
-  AccessCheckSessionOutgoingDTO,
-  checkUserAuthStatus,
-  validateDTO,
-} from '../../../../services/api';
-import {
-  checkUserAuthStatusAsync,
-  logoutUserAsync,
-  setContacts,
-  setSelectedContactIdxUi,
-  setUserAuthLoadStatus,
-  setUserInfo,
+  obtainSessionAsync,
+  setUserAuthLoadingStatus,
   setUserIsAuthenticated,
 } from '../../../slices';
-import { AbortError } from '../../../../services';
 
-function* checkUserAuthStatusWorker(action: {
-  type: string;
-  payload: Partial<TAccessCheckSessionOutgoingFields>;
-}) {
+function* obtainSessionWorker(action: { type: string; payload: undefined }) {
   const abortController = new AbortController();
   try {
-    yield put(setUserAuthLoadStatus({ status: 'loading' }));
-
-    const validateStatus = (yield safe(
-      call(validateDTO, {
-        schema: AccessCheckSessionOutgoingDTO,
-        value: action.payload,
-      }),
-    )) as TSafeReturn<TAccessCheckSessionOutgoingFields>;
-
-    if (validateStatus.error !== undefined) {
-      yield put(setUserAuthLoadStatus({ status: 'failure' }));
-      yield put(setUserIsAuthenticated({ status: false }));
-      return;
-    }
+    yield put(setUserAuthLoadingStatus({ status: 'loading' }));
 
     const fetchStatus = (yield safe(
-      call(checkUserAuthStatus, {
-        dto: validateStatus.response,
+      call(obtainSession, {
         abortSignal: abortController.signal,
       }),
     )) as TSafeReturn<{
-      success?: TAccessCheckSessionIncomingSuccessFields;
-      failure?: TAccessCheckSessionIncomingFailureFields;
+      success?: TAccessSessionInitIncomingSuccessFields;
+      failure?: TAccessSessionInitIncomingFailureFields;
     }>;
 
     publishLog(ELOG_LEVEL.DEBUG, fetchStatus);
@@ -63,29 +37,22 @@ function* checkUserAuthStatusWorker(action: {
         return;
       }
       yield put(
-        setUserAuthLoadStatus({ status: 'failure', message: String(fetchStatus.error.message) }),
+        setUserAuthLoadingStatus({ status: 'failure', message: String(fetchStatus.error.message) }),
       );
       return;
     }
 
     if (fetchStatus.response.success !== undefined) {
       yield put(
-        setUserAuthLoadStatus({ status: 'success', message: 'Session checked successfully!' }),
+        setUserAuthLoadingStatus({ status: 'success', message: 'Session obtained successfully!' }),
       );
       yield put(setUserIsAuthenticated({ status: true }));
-      yield put(
-        setUserInfo({
-          idInstance: validateStatus.response.idInstance,
-          apiTokenInstance: validateStatus.response.apiTokenInstance,
-          wid: fetchStatus.response.success.wid,
-        }),
-      );
       return;
     }
 
     if (fetchStatus.response.failure !== undefined) {
       yield put(
-        setUserAuthLoadStatus({
+        setUserAuthLoadingStatus({
           status: 'failure',
           message: String(fetchStatus.response.failure.detail),
         }),
@@ -104,29 +71,8 @@ function* checkUserAuthStatusWorker(action: {
   }
 }
 
-function* logoutUserWorker() {
-  yield put(
-    setUserInfo({
-      idInstance: '',
-      apiTokenInstance: '',
-      wid: '',
-    }),
-  );
-
-  yield put(
-    setUserIsAuthenticated({
-      status: false,
-    }),
-  );
-
-  yield put(setContacts({ contacts: [] }));
-
-  yield put(setSelectedContactIdxUi({ contactIdx: -1 }));
-}
-
 function* userAuthStatusWatcher() {
-  yield takeLatest(checkUserAuthStatusAsync, checkUserAuthStatusWorker);
-  yield takeLatest(logoutUserAsync, logoutUserWorker);
+  yield takeLatest(obtainSessionAsync, obtainSessionWorker);
 }
 
 export { userAuthStatusWatcher };

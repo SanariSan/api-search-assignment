@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import {
+  loadingSearchEntitiesSelector,
+  loadingUserAuthSelector,
+  uiPathnameSelector,
+} from '../../store';
 import { useAppSelector } from '../redux';
-import { loadingHistorySelector, loadingUserAuthSelector } from '../../store';
 
 const useLoadingTracker = () => {
+  const searchEntitiesLoadingStatus = useAppSelector(loadingSearchEntitiesSelector);
   const userAuthLoadingStatus = useAppSelector(loadingUserAuthSelector);
-  const historyLoadingStatus = useAppSelector(loadingHistorySelector);
   const [isLoading, setIsLoading] = useState(false);
 
   // path change fake loading just for UI consistency
   // if another loading source switches to TRUE then loading would just continue
-  const { pathname } = useLocation();
+  const pathname = useAppSelector(uiPathnameSelector);
   const [pageChangedLoading, setPageChangedLoading] = useState(false);
   useEffect(() => {
     setPageChangedLoading(true);
@@ -22,15 +25,15 @@ const useLoadingTracker = () => {
   useEffect(() => {
     // || dashboardLoadingStatus === 'loading' || smthElse === true ...
     if (
+      searchEntitiesLoadingStatus === 'loading' ||
       userAuthLoadingStatus === 'loading' ||
-      historyLoadingStatus === 'loading' ||
       pageChangedLoading
     ) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
     }
-  }, [userAuthLoadingStatus, historyLoadingStatus, pageChangedLoading]);
+  }, [searchEntitiesLoadingStatus, userAuthLoadingStatus, pageChangedLoading]);
 
   return { isLoading };
 };

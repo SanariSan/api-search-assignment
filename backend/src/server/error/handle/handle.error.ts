@@ -8,8 +8,10 @@ import {
   NotFoundErrorResponse,
   RegistrationErrorResponse,
   BadRequestErrorResponse,
+  AbortedErrorResponse,
 } from '../../responses';
 import {
+  AbortedError,
   CredentialsMismatchError,
   DuplicateUserError,
   NoSessionError,
@@ -35,6 +37,9 @@ function getMatchingErrorResponse(e: Readonly<IError>) {
     }
     case e instanceof ParamsValidationError: {
       return BadRequestErrorResponse;
+    }
+    case e instanceof AbortedError: {
+      return AbortedErrorResponse;
     }
     default: {
       return InternalErrorResponse;

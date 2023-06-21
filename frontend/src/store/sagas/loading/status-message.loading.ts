@@ -1,12 +1,9 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import {
-  setAknowledgeLoadStatus,
   setErrorMessageUi,
-  setHistoryLoadStatus,
-  setSendMessageLoadStatus,
+  setSearchEntitiesLoadingStatus,
   setSuccessMessageUi,
-  setUpdatesLoadStatus,
-  setUserAuthLoadStatus,
+  setUserAuthLoadingStatus,
 } from '../../slices';
 import type { TLoadingStatus } from '../../slices/slices.type';
 
@@ -34,17 +31,7 @@ function* statusMessageWorker(action: {
 }
 
 function* loadingStatusWatcher() {
-  yield takeEvery(
-    [
-      setUserAuthLoadStatus,
-      setHistoryLoadStatus,
-      setUpdatesLoadStatus,
-      setUpdatesLoadStatus,
-      setAknowledgeLoadStatus,
-      setSendMessageLoadStatus,
-    ],
-    statusMessageWorker,
-  );
+  yield takeEvery([setSearchEntitiesLoadingStatus, setUserAuthLoadingStatus], statusMessageWorker);
 }
 
 export { loadingStatusWatcher };

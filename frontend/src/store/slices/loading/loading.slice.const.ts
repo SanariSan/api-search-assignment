@@ -1,10 +1,7 @@
 import type { TLoadingInitState } from './loading.slice.type';
 
 const LOADING_INIT_STATE: TLoadingInitState = {
-  historyLoadingStatus: 'idle',
-  updatesLoadingStatus: 'idle',
-  aknowledgeLoadingStatus: 'idle',
-  sendMessageLoadingStatus: 'idle',
+  searchEntitiesLoadingStatus: 'idle',
   userAuthLoadingStatus: 'idle',
 };
 

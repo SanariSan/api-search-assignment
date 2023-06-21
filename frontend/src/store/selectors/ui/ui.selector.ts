@@ -16,14 +16,6 @@ const uiScreenDetailsSelector = createSelector(
   (state: TRootState) => state.ui.screenDetails,
   (screenDetails) => screenDetails,
 );
-const uiSelectedContactIdxSelector = (state: TRootState) => state.ui.selectedContactIdx;
-// const uiSelectedContactSelector = createSelector(
-//   uiSelectedContactIdxSelector,
-//   (contacts, contactIdx) => {
-//     if (contacts[contactIdx] === undefined) return;
-//     return contacts[contactIdx];
-//   },
-// );
 
 export {
   uiColorModeAnimationDurationSelector,
@@ -34,7 +26,6 @@ export {
   uiInfoSelector,
   uiIsMobileSelector,
   uiPathnameSelector,
-  uiSelectedContactIdxSelector,
   uiSidebarStateSelector,
   uiSuccessSelector,
   uiWarningSelector,

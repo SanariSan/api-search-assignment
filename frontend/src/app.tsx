@@ -11,7 +11,6 @@ import {
   ScreenDetailsTrackerContainerMemo,
 } from './containers/functional';
 import { LoadingTrackerProgressContainer } from './containers/loading-tracker-progress';
-import { LoginContainer } from './containers/login';
 import { NotFoundContainerMemo } from './containers/not-found';
 import { ThemeSwitchContainerMemo } from './containers/theme-switch';
 import { ToastsContainerMemo } from './containers/toast/toast';
@@ -40,13 +39,8 @@ const App: FC = () => {
       >
         <Switch>
           <Route exact path={'/'}>
-            <AuthenticatedAccessContainer mustBe={'authenticated'} redirectLocation={'/login'}>
+            <AuthenticatedAccessContainer mustBe={'authenticated'} redirectLocation={'/'}>
               <DashboardLayoutContainer />
-            </AuthenticatedAccessContainer>
-          </Route>
-          <Route exact path="/login">
-            <AuthenticatedAccessContainer mustBe={'unauthenticated'} redirectLocation={'/'}>
-              <LoginContainer />
             </AuthenticatedAccessContainer>
           </Route>
           <Route path="/">

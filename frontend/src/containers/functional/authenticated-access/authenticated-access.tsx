@@ -7,16 +7,15 @@ import { ELOG_LEVEL } from '../../../general.type';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { publishLog } from '../../../modules/access-layer/events/pubsub';
 import {
-  checkUserAuthStatusAsync,
   loadingUserAuthSelector,
-  userAuthIsAuthenticatedSelector,
-  userInfoSelector,
+  obtainSessionAsync,
+  userIsAuthenticatedSelector,
 } from '../../../store';
 import type { TAuthRoute } from './authenticated-access.type';
 
 const AuthenticatedAccessContainer: FC<TAuthRoute> = ({ children, mustBe, redirectLocation }) => {
   const d = useAppDispatch();
-  const isAuthenticated = useAppSelector(userAuthIsAuthenticatedSelector);
+  const isAuthenticated = useAppSelector(userIsAuthenticatedSelector);
   const isAuthenticatedMapped = useMemo(
     () =>
       isAuthenticated === true
@@ -28,7 +27,6 @@ const AuthenticatedAccessContainer: FC<TAuthRoute> = ({ children, mustBe, redire
   );
   const userAuthLoadingStatus = useAppSelector(loadingUserAuthSelector);
   const [spinner] = [useColorModeValue(COLORS.yellow[400], COLORS.yellow[400])];
-  const { idInstance, apiTokenInstance } = useAppSelector(userInfoSelector);
 
   useEffect(() => {
     publishLog(ELOG_LEVEL.DEBUG, {
@@ -39,9 +37,8 @@ const AuthenticatedAccessContainer: FC<TAuthRoute> = ({ children, mustBe, redire
   }, [isAuthenticated, mustBe, redirectLocation]);
 
   useEffect(() => {
-    if (isAuthenticated === 'idle')
-      void d(checkUserAuthStatusAsync({ idInstance, apiTokenInstance }));
-  }, [d, isAuthenticated, apiTokenInstance, idInstance]);
+    if (isAuthenticated === 'idle') void d(obtainSessionAsync());
+  }, [d, isAuthenticated]);
 
   if (isAuthenticated === 'idle') {
     return (

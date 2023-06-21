@@ -3,28 +3,6 @@ import { sleep } from '../helpers/util';
 import { DEFAULT_FETCH_HEADERS, DEFAULT_FETCH_OPTIONS } from './request.services.const';
 import type { IRequestOptions } from './request.services.type';
 
-/**
- * Logic is following:
- *
- * 1) Need to listen to outside abort signal
- * 2) Need to be able to abort req on timeout with local signal (local abort controller)
- * * * * * * * * * * * * * * * * *
- * So, the solution is the following:
- *
- * 1) Passing signal entity from outside (if exists and needed), otherwise dummy signal created in place
- *
- * 2) On each req try creating local AbortController, wrapping >IT< in outside abort signal listener,
- * passing >IT< to fetch
- *
- * 3) If outside signal aborts, local AbortController replicates state (aborts) through listener,
- * aborts ongoing req, then exits loop on check below | "if (abortSignal.aborted)"
- * >>This check is necessary to exit early and prevent redundant "sleep" operation,
- * since abort would be replicated on next event subscribe anyways
- *
- * 4) Since local AbortController is recreated on each iteration, we can abort it freely if timeout happens,
- * then on next iteration start from scratch and subscribe to outside signal again
- */
-
 const triggerLocalAbortControllerCbWrapper = (localAbortController: AbortController) => () => {
   localAbortController.abort();
 };
@@ -53,6 +31,28 @@ const cleanupExternalAbortSignalListener = ({
 }) => {
   abortSignal.removeEventListener('abort', triggerLocalAbortControllerCb);
 };
+
+/**
+ * Logic is following:
+ *
+ * 1) Need to listen to outside abort signal
+ * 2) Need to be able to abort req on timeout with local signal (local abort controller)
+ * * * * * * * * * * * * * * * * *
+ * So, the solution is the following:
+ *
+ * 1) Passing signal entity from outside (if exists and needed), otherwise dummy signal created in place
+ *
+ * 2) On each req try creating local AbortController, wrapping >IT< in outside abort signal listener,
+ * passing >IT< to fetch
+ *
+ * 3) If outside signal aborts, local AbortController replicates state (aborts) through listener,
+ * aborts ongoing req, then exits loop on check below | "if (abortSignal.aborted)"
+ * >>This check is necessary to exit early and prevent redundant "sleep" operation,
+ * since abort would be replicated on next event subscribe anyways
+ *
+ * 4) Since local AbortController is recreated on each iteration, we can abort it freely if timeout happens,
+ * then on next iteration start from scratch and subscribe to outside signal again
+ */
 
 async function request({
   url,

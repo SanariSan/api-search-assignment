@@ -1,18 +1,18 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
-  persistStore,
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
   PURGE,
   REGISTER,
+  REHYDRATE,
+  persistReducer,
+  persistStore,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import createSagaMiddleware from 'redux-saga';
 import { rootWatcher } from './sagas';
-import { contacts, user, ui, loading, fetchChatHistoryAsync, fetchUpdateAsync } from './slices';
+import { entities, loading, user, ui } from './slices';
 
 // advanced debugging template
 const sagaMiddleware = createSagaMiddleware({
@@ -41,9 +41,9 @@ const sagaMiddleware = createSagaMiddleware({
  */
 
 // Using abort controller as an argument, so have to ignore here
-const ignoredSerializableCheckActions = [fetchChatHistoryAsync, fetchUpdateAsync].map((_) =>
-  _.toString(),
-);
+// const ignoredSerializableCheckActions = [fetchChatHistoryAsync, fetchUpdateAsync].map((_) =>
+//   _.toString(),
+// );
 
 const persistConfig = {
   key: 'root',
@@ -52,10 +52,10 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  user,
-  contacts,
+  entities,
   ui,
   loading,
+  user,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -75,7 +75,7 @@ const Store = configureStore({
           PERSIST,
           PURGE,
           REGISTER,
-          ...ignoredSerializableCheckActions,
+          // ...ignoredSerializableCheckActions,
         ],
       },
     }).concat(sagaMiddleware),
@@ -87,4 +87,4 @@ const Persistor = persistStore(Store);
 
 sagaMiddleware.run(rootWatcher);
 
-export { Store, Persistor };
+export { Persistor, Store };

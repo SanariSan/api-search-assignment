@@ -1,4 +1,4 @@
-export * from './contacts';
+export * from './entities';
 export * from './ui';
-export * from './user';
 export * from './loading';
+export * from './user';

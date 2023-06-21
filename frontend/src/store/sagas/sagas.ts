@@ -1,12 +1,12 @@
 import { all, call, spawn } from 'redux-saga/effects';
 import { ELOG_LEVEL } from '../../general.type';
 import { publishError } from '../../modules/access-layer/events/pubsub';
-import { contactsRootWatcher } from './contacts';
+import { entitiesRootWatcher } from './entities';
 import { loadingRootWatcher } from './loading';
 import { userAuthRootWatcher } from './user';
 
 function* rootWatcher() {
-  const sagas = [userAuthRootWatcher, contactsRootWatcher, loadingRootWatcher];
+  const sagas = [entitiesRootWatcher, userAuthRootWatcher, loadingRootWatcher];
 
   yield all(
     sagas.map((saga) =>

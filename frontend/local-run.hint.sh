@@ -2,7 +2,7 @@
 
 ### not maintened for this project
 
-PROJECT_NAME=wa-static;
+PROJECT_NAME=api-assignment;
 
 docker run --rm \
 -v "${PROJECT_NAME}-front-build-volume:/old-build" \
