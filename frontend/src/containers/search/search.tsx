@@ -3,12 +3,8 @@ import { Formik } from 'formik';
 import type { FC } from 'react';
 import { memo, useCallback, useState } from 'react';
 import { DELIM, SearchComponentMemo } from '../../components/search';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import {
-  loadingSearchEntitiesSelector,
-  searchEntitiesAsync,
-  searchEntitiesV2Async,
-} from '../../store';
+import { useAppDispatch } from '../../hooks/redux';
+import { searchEntitiesAsync, searchEntitiesV2Async } from '../../store';
 import { FormControlContainerMemo } from '../form-control';
 import type { TSearchFormValues } from './search.const';
 import { VALIDATION_SCHEMA } from './search.const';
@@ -18,7 +14,7 @@ type TSearchContainer = {
 };
 
 const SearchContainer: FC<TSearchContainer> = () => {
-  const searchEntitiesLoadingState = useAppSelector(loadingSearchEntitiesSelector);
+  // const searchEntitiesLoadingState = useAppSelector(loadingSearchEntitiesSelector);
   const dispatch = useAppDispatch();
   const [currentVersion, setCurrentVersion] = useState<'v1' | 'v2'>('v1');
 
@@ -68,7 +64,7 @@ const SearchContainer: FC<TSearchContainer> = () => {
             onChangeVersion={changeVersionCb}
             {...formikConfig}
           />
-          <FormControlContainerMemo isLoading={searchEntitiesLoadingState === 'loading'} />
+          <FormControlContainerMemo isLoading={false} />
         </>
       )}
     </Formik>
