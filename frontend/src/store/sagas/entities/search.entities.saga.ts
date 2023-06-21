@@ -14,6 +14,70 @@ import { EntitiesSearchOutgoingDTO } from '../../../services/api/dto/entities';
 import type { TEntities } from '../../slices';
 import { searchEntitiesAsync, setEntities, setSearchEntitiesLoadingStatus } from '../../slices';
 
+// function* requestWorker<TOutgoingFields, TIncomingSuccessFields, TIncomingFailureFields>({
+//   setLoadingStatus,
+//   OutgoingDTO,
+//   payload,
+//   fetchCb,
+//   signal,
+// }) {
+//   yield put(setLoadingStatus({ status: 'loading' }));
+
+//   const validateStatus = (yield safe(
+//     call(validateDTO, {
+//       schema: OutgoingDTO,
+//       value: payload,
+//     }),
+//   )) as TSafeReturn<TOutgoingFields>;
+
+//   if (validateStatus.error !== undefined) {
+//     yield put(setLoadingStatus({ status: 'failure' }));
+//     return;
+//   }
+
+//   const fetchStatus = (yield safe(
+//     call(fetchCb, {
+//       dto: validateStatus.response,
+//       abortSignal: signal,
+//     }),
+//   )) as TSafeReturn<{
+//     success?: TIncomingSuccessFields;
+//     failure?: TIncomingFailureFields;
+//   }>;
+
+//   if (fetchStatus.error !== undefined) {
+//     if (fetchStatus.error instanceof AbortError) {
+//       publishError(ELOG_LEVEL.DEBUG, fetchStatus.error);
+//       return;
+//     }
+
+//     yield put(
+//       setLoadingStatus({
+//         status: 'failure',
+//         message: String(fetchStatus.error.message),
+//       }),
+//     );
+//     return;
+//   }
+
+//   if (fetchStatus.response.success !== undefined) {
+//     yield put(setLoadingStatus({ status: 'success' }));
+
+//     // yield put(setEntities({ entities: fetchStatus.response.success.data.entities }));
+//     return;
+//   }
+
+//   if (fetchStatus.response.failure !== undefined) {
+//     yield put(
+//       setLoadingStatus({
+//         status: 'failure',
+//         message: String(fetchStatus.response.failure.detail),
+//       }),
+//     );
+//     return;
+//   }
+// }
+
 function* searchWorker(action: {
   payload: Partial<Exclude<TEntities[number], undefined>>;
   type: string;
