@@ -44,5 +44,5 @@
 
 <br />
 
-<div align="center"><img src="https://github.com/SanariSan/api-search-assignment/blob/master/assets/1.png?raw=true" width="675" height="483"></div>
+<div align="center"><img src="https://github.com/SanariSan/api-search-assignment/blob/master/assets/1.png?raw=true" width="859" height="483"></div>
 
