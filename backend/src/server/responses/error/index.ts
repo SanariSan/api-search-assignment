@@ -4,3 +4,4 @@ export * from './internal-error.response';
 export * from './not-found-error.response';
 export * from './registration-error.response';
 export * from './bad-request-error.response copy';
+export * from './aborted-error.response';
