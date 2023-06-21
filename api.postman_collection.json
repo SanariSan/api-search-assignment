@@ -87,6 +87,36 @@
 									"response": []
 								}
 							]
+						},
+						{
+							"name": "Access",
+							"item": [
+								{
+									"name": "Session-Init",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://127.0.0.1:80/api/v1/access/session-init",
+											"protocol": "http",
+											"host": [
+												"127",
+												"0",
+												"0",
+												"1"
+											],
+											"port": "80",
+											"path": [
+												"api",
+												"v1",
+												"access",
+												"session-init"
+											]
+										}
+									},
+									"response": []
+								}
+							]
 						}
 					]
 				},
