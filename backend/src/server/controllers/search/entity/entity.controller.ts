@@ -4,10 +4,68 @@ import { SessionManager } from '../../../../helpers/session';
 import { ENTITIES } from '../../../../logic';
 import type { IPublishEntity } from '../../../../modules/access-layer/events/pubsub';
 import { Sub, publishCustom } from '../../../../modules/access-layer/events/pubsub';
-import type { TRequestValidatedEntity } from '../../../express.type';
+import type { TEntity, TRequestValidatedEntity } from '../../../express.type';
 import { AbortedErrorResponse, SuccessResponse } from '../../../responses';
 
 const sub = new Sub();
+
+// this will be fired on cleanup event and prevent success response from being sent
+const clearTimeoutCbWrap = ({ timeoutId }: { timeoutId: NodeJS.Timeout }) =>
+  function clearTimeoutCb({ channel }: IPublishEntity) {
+    if (channel === 'cleanup') {
+      // cleanup itself after fired
+      sub.removeListener(clearTimeoutCb);
+
+      // clear timeout to avoid sending success response after abort happened
+      clearTimeout(timeoutId);
+    }
+  };
+
+// this will be fired on cleanup event and return an error for previous call
+const abortPrevReqCbWrap = ({ res }: { res: Response }) =>
+  function abortPrevReqCb({ channel }: IPublishEntity) {
+    if (channel === 'cleanup') {
+      // cleanup itself after fired
+      sub.removeListener(abortPrevReqCb);
+
+      // error response for previous call
+      new AbortedErrorResponse({
+        res,
+      }).send();
+    }
+  };
+
+// this will be fired after successful 5s delay without new incoming requests
+const sendSuccessResponseCbWrap =
+  ({
+    req,
+    res,
+    payload,
+  }: {
+    req: TRequestValidatedEntity;
+    res: Response;
+    payload: Array<Required<TEntity>>;
+  }) =>
+  () => {
+    // remove cleanup callbacks so they won't be triggered by later reqs as a side effect
+    sub.removeAllListeners();
+
+    // mark processing as done
+    req.session.user = {
+      isProcessing: false,
+    };
+
+    // update flag in session and return success response from closure
+    void SessionManager.save({ session: req.session }).then(() => {
+      new SuccessResponse({
+        res,
+        data: {
+          entities: payload,
+        },
+      }).send();
+      return;
+    });
+  };
 
 export const searchEntityCTR = async (
   req: TRequestValidatedEntity,
@@ -33,48 +91,17 @@ export const searchEntityCTR = async (
     return true;
   });
 
-  let timeoutId: NodeJS.Timeout;
+  const sendSuccessResponseCb = sendSuccessResponseCbWrap({ req, res, payload: filtered });
 
-  // this will be fired on cleanup event and return an error for previous call
-  const cleanupCb = ({ channel }: IPublishEntity) => {
-    if (channel === 'cleanup') {
-      // clear success response timeout
-      clearTimeout(timeoutId);
+  // schedule (success response)
+  const timeoutId: NodeJS.Timeout = setTimeout(sendSuccessResponseCb, 5000);
 
-      // unsubscribe callback placed in current closure
-      sub.removeListener(cleanupCb);
+  // schedule (error response) + (planned success response cancellation)
+  const clearTimeoutCb = clearTimeoutCbWrap({ timeoutId });
+  const abortPrevReqCb = abortPrevReqCbWrap({ res });
 
-      // error response for previous call
-      new AbortedErrorResponse({
-        res,
-      }).send();
-    }
-  };
+  sub.listen(abortPrevReqCb);
+  sub.listen(clearTimeoutCb);
 
-  // this will be fired after successful 5s delay without new incoming requests
-  const sendSuccessResponseCb = () => {
-    // remove cleanup callback from current closure so it won't be triggered by later reqs
-    sub.removeListener(cleanupCb);
-
-    // mark processing as done
-    req.session.user = {
-      isProcessing: false,
-    };
-
-    // update flag in session and return success response from closure
-    void SessionManager.save({ session: req.session }).then(() => {
-      new SuccessResponse({
-        res,
-        data: {
-          entities: filtered,
-        },
-      }).send();
-      return;
-    });
-  };
-
-  timeoutId = setTimeout(sendSuccessResponseCb, 5000);
-
-  sub.listen(cleanupCb);
   sub.subscribe('cleanup');
 };
