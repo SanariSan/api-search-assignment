@@ -1,8 +1,11 @@
 <div align="center"><h1>api-search-assignment</h1></div>
 
 <div align="center"><b>Fullstack assignment project</b></div>
-<!-- <div align="center"><b><a href="https://whatsapp.nodejs.monster/">https://whatsapp.nodejs.monster/</a></b></div>
-<div align="center"><b><a href="https://green-api.com/">Get free api key here (or use my personal one placed on page)</a></b></div> -->
+<div align="center"><b><a href="https://test.nodejs.monster/">https://test.nodejs.monster/</a></b></div>
+
+<br />
+
+<div align="center"><b>Two different request abort methods, one on client side and one on server side</b></div>
 
 <br />
 
@@ -40,7 +43,6 @@
 ---
 
 <br />
-<!-- 
-<div align="center"><img src="https://github.com/SanariSan/wa-assignment/blob/master/assets/1.png?raw=true" width="859" height="483"></div>
-<div align="center"><img src="https://github.com/SanariSan/wa-assignment/blob/master/assets/2.png?raw=true" width="859" height="483"></div> -->
+
+<div align="center"><img src="https://github.com/SanariSan/api-search-assignment/blob/master/assets/1.png?raw=true" width="859" height="483"></div>
 
