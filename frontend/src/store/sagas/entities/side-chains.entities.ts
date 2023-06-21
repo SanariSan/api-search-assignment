@@ -1,0 +1,5 @@
+function* sideChainWatcher() {
+  //
+}
+
+export { sideChainWatcher };

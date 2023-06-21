@@ -1,0 +1,14 @@
+@mixin flexCenter($direction) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+
+  flex-direction: $direction;
+}
+
+@mixin centerY() {
+  height: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+}

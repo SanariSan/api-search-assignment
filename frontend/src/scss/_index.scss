@@ -1,0 +1,24 @@
+//include fonts
+@import 'fonts';
+
+//set vars, they could use fonts /\
+@import 'vars';
+
+//theme switch vars
+@import 'theme-presets';
+
+//iclude libs such ass bootstrap and semantic-ui
+//after vars, bcs to overwrite lib values you define vars -> include libs
+// @import 'libs';
+
+//reset all paddings/margins/etc we don't like from libs
+// @import 'resets';
+
+//add mixins, such as breakpoints for responsive ui and custom ones
+@import 'mixins/index';
+
+//include overwrites for general html elements such as h1, div, a, etc...
+@import 'general-custom';
+
+//include overwrites for lib-internal styles
+// @import 'bootstrap-custom';
