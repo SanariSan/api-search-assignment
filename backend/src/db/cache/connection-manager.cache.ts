@@ -1,5 +1,7 @@
 import type { RedisClientType } from 'redis';
 import { createClient } from 'redis';
+import { publishLog } from '../../modules/access-layer/events/pubsub';
+import { ELOG_LEVEL } from '../../general.type';
 
 class CacheDBConnectionManager {
   private static instance?: CacheDBConnectionManager;
@@ -28,7 +30,7 @@ class CacheDBConnectionManager {
     });
 
     this.client.on('connect', () => {
-      console.log('Redis re/connected');
+      publishLog(ELOG_LEVEL.WARN, 'Redis re/connected');
     });
 
     // catching socket event error, otherwise it'll crash whole app

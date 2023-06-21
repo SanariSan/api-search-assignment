@@ -74,6 +74,7 @@ export const searchEntityCTR = async (
   };
 
   timeoutId = setTimeout(sendSuccessResponseCb, 5000);
+
   sub.listen(cleanupCb);
   sub.subscribe('cleanup');
 };
