@@ -1,0 +1,89 @@
+$font-def: 'Roboto', 'Helvetica Neue', sans-serif;
+$font-alt: 'Roboto Medium', 'Helvetica Neue', sans-serif;
+
+$font-size-def: 1em;
+$font-size-small: 0.75rem;
+$font-size-big: 1.25rem;
+
+$font-size-h1: 2em;
+$font-size-h2: 1.5em;
+$font-size-h3: 1.17em;
+$font-size-h4: $font-size-def;
+$font-size-h5: 0.83em;
+$font-size-h6: 0.75em;
+$margin-h1: 0.67em 0;
+$margin-h2: 0.75em 0;
+$margin-h3: 0.83em 0;
+$margin-h4: 1.12em 0;
+$margin-h5: 1.5em 0;
+$margin-h6: 1.67em 0;
+
+$color-white: #ffffff;
+$color-white-soft: rgb(255, 255, 246);
+$color-black: #000000;
+$color-black-soft: rgb(25, 25, 25);
+$color-purple: #4d4291;
+$color-purple-alt: #958bb6; //#8272c7;
+$color-purple-light: #fbf8ff; //#f6ebff; //#f6f6ff;
+$color-gray-dark: #1d1d1d;
+$color-gray-alt-dark: #2f2f2f;
+$color-blue-alt-dark: #32303f;
+$color-accent: #00c896;
+
+$header-color-light: $color-purple;
+$bg-color-light: $color-purple-light;
+$bg-color-alt-light: $color-purple-alt;
+$text-color-accent-light: $color-accent; //$color-purple
+$text-color-light: $color-black-soft;
+$text-color-alt-light: $color-white-soft;
+$text-color-inactive-light: lighten($text-color-light, 25%);
+$text-color-inactive-alt-light: darken($text-color-alt-light, 25%);
+
+$header-color-dark: $color-gray-dark;
+$bg-color-dark: $color-gray-dark; //maybe darken $light-purple-color
+$bg-color-alt-dark: $color-blue-alt-dark;
+$text-color-accent-dark: $color-accent; //$purple-alt-color; //maybe lighten later $color-purple
+$text-color-dark: $color-white-soft;
+$text-color-alt-dark: $color-black-soft;
+$text-color-inactive-dark: darken($text-color-dark, 25%);
+$text-color-inactive-alt-dark: lighten($text-color-alt-dark, 25%);
+
+// vars for custom media query MIXINS
+
+// value and higher
+// Small tablets and large smartphones (landscape view)
+$screen-xs-min: 0px;
+// Small tablets (portrait view)
+$screen-sm-min: 319px;
+// Tablets and small desktops
+$screen-md-min: 767px;
+// Large tablets and desktops
+$screen-lg-min: 1023px;
+// Big screens
+$screen-xl-min: 1439px;
+// Very big screens (~2k resolution)
+$screen-xxl-min: 1799px;
+
+// Customization Bootstrap grid vars from "app/libs/bootstrap/scss/_variables.scss"
+// $grid-gutter-width: 1.5rem;
+// $grid-columns: 12;
+// value and higher
+// $grid-breakpoints: (
+//   xs: $screen-xs-min,
+//   sm: $screen-sm-min,
+//   md: $screen-md-min,
+//   lg: $screen-lg-min,
+//   xl: $screen-xl-min,
+//   xxl: $screen-xxl-min,
+// );
+// 95% from breakpoints values
+// $reduce-multiplier: 0.95;
+// $container-max-widths: (
+//   sm: $screen-sm-min * $reduce-multiplier,
+//   md: $screen-md-min * $reduce-multiplier,
+//   lg: $screen-lg-min * $reduce-multiplier,
+//   xl: $screen-xl-min * $reduce-multiplier,
+//   xxl: $screen-xxl-min * $reduce-multiplier,
+// );
+
+// $gutter: $grid-gutter-width;

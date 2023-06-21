@@ -1,0 +1,144 @@
+version: '3.7'
+
+volumes:
+  api-assignment-backend-redis-data:
+    external: false
+  api-assignment-front-build-volume:
+    external: true
+  api-assignment-backend-assets-volume:
+    external: true
+
+networks:
+  inbound:
+    name: inbound
+    external: true
+services:
+  api_assignment_redis:
+    container_name: api_assignment_redis
+    image: redis:7.0.5-alpine
+    restart: unless-stopped
+    stop_signal: SIGINT
+    stop_grace_period: 60s
+    environment:
+      NETWORK_ACCESS: 'internal'
+    #   - REDIS_DISABLE_COMMANDS=FLUSHALL,MIGRATE,RESTORE,SORT,KEYS,CLIENT,DEBUG,INFO,CONFIG,SAVE,REPLICAOF,MONITOR,ACL,SHUTDOWN
+    networks:
+      - default
+    volumes:
+      - api-assignment-backend-redis-data:/data:rw
+    expose:
+      - '${CACHE_PORT}'
+    # ports:
+    #   - '${CACHE_PORT}:6379'
+    command:
+      # docs: https://raw.githubusercontent.com/redis/redis/7.0/redis.conf
+      [
+        'redis-server',
+
+        '--requirepass',
+        '${CACHE_PASSWORD}',
+
+        '--loglevel',
+        'warning',
+        # '--logfile',
+        # 'redis.log',
+
+        '--save',
+        '20 1',
+        '--appendonly',
+        'yes',
+        '--auto-aof-rewrite-percentage',
+        '100',
+        '--auto-aof-rewrite-min-size',
+        '64mb',
+        '--aof-load-truncated',
+        'yes',
+        '--aof-use-rdb-preamble',
+        'yes',
+        '--appendfsync',
+        'everysec',
+        '--appendfilename',
+        'appendonly.aof',
+        '--appenddirname',
+        'appendonlydir',
+
+        '--maxmemory',
+        '512mb',
+        '--maxmemory-policy',
+        'allkeys-lru',
+        '--lazyfree-lazy-eviction',
+        'yes',
+        '--lazyfree-lazy-expire',
+        'yes',
+        '--lazyfree-lazy-server-del',
+        'no',
+        '--replica-lazy-flush',
+        'no',
+
+        '--slowlog-log-slower-than',
+        '1000000',
+        '--slowlog-max-len',
+        '128',
+        '--busy-reply-threshold',
+        '5000',
+        '--shutdown-timeout',
+        '60',
+
+        '--io-threads',
+        '1',
+        '--io-threads-do-reads',
+        'no',
+      ]
+  api_assignment_server:
+    container_name: api_assignment_server
+    image: sanarisan/api_assignment_server:1
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: ./docker/app.Dockerfile
+    stop_signal: SIGINT
+    stop_grace_period: 60s
+    networks:
+      - default
+    depends_on:
+      - api_assignment_redis
+    expose:
+      - '${PORT}'
+    env_file:
+      - .env
+    environment:
+      CORS_URL: '${CORS_URL}'
+      API_VERSION: '${API_VERSION}'
+      COOKIE_SECRET: '${COOKIE_SECRET}'
+      CACHE_PASSWORD: '${CACHE_PASSWORD}'
+      DEV_TAG: '${DEV_TAG}'
+      NETWORK_ACCESS: 'internal'
+    # this may introduce race condition, be aware
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
+  api_assignment_nginx:
+    container_name: api_assignment_nginx
+    image: sanarisan/api_assignment_nginx:1
+    restart: unless-stopped
+    build:
+      context: './'
+      dockerfile: './docker/nginx.Dockerfile'
+      args:
+        STATIC_PATH: '${STATIC_PATH}'
+    networks:
+      - default
+      - inbound
+    volumes:
+      - type: volume
+        source: api-assignment-front-build-volume
+        target: '${STATIC_PATH}/api-assignment'
+      - type: volume
+        source: api-assignment-backend-assets-volume
+        target: '${STATIC_PATH}/assets'
+    environment:
+      VIRTUAL_HOST: '${VIRTUAL_HOST}'
+      LETSENCRYPT_HOST: '${LETSENCRYPT_HOST}'
+      STATIC_PATH: '${STATIC_PATH}'
+    expose:
+      - '80'

@@ -1,0 +1,22 @@
+{
+	"name": "fullstack",
+	"version": "1.0.0",
+	"repository": "https://github.com/SanariSan/tech-store",
+	"author": "SanariSan <SanariSan@users.noreply.github.com>",
+	"license": "MIT",
+	"scripts": {
+		"---todo: need node-sass binary to make it fully working--": "https://stackoverflow.com/q/45424094",
+		"offline": "yarn rm-old-backend && yarn rm-old-frontend && yarn prepare-yarn-backend && yarn prepare-yarn-frontend && yarn rm-original-config && yarn install-backend && yarn install-frontend && yarn test-offline",
+		"rm-old-backend": "node ./helpers/rm.js ./backend/node_modules/ ./backend/yarn.lock ./backend/.yarnrc",
+		"rm-old-frontend": "node ./helpers/rm.js ./frontend/node_modules/ ./frontend/yarn.lock ./frontend/.yarnrc",
+		"prepare-yarn-backend": "cd ./backend && yarn config set yarn-offline-mirror-pruning true && yarn config set yarn-offline-mirror ./packages-offline-cache && cd .. && node ./helpers/cp.js ~/.yarnrc C:/Users/user/.yarnrc ./backend/.yarnrc",
+		"prepare-yarn-frontend": "cd ./frontend && yarn config set yarn-offline-mirror-pruning true && yarn config set yarn-offline-mirror ./packages-offline-cache && cd .. && node ./helpers/cp.js ~/.yarnrc C:/Users/user/.yarnrc ./frontend/.yarnrc",
+		"rm-original-config": "node ./helpers/rm.js ~/.yarnrc C:/Users/user/.yarnrc",
+		"install-backend": "yarn --cwd ./backend install",
+		"install-frontend": "yarn --cwd ./frontend install",
+		"test-offline": "yarn clean-cache && yarn install-backend-offline && yarn install-frontend-offline",
+		"clean-cache": "yarn cache clean",
+		"install-backend-offline": "yarn --cwd ./backend install --offline",
+		"install-frontend-offline": "yarn --cwd ./frontend install --offline"
+	}
+}
