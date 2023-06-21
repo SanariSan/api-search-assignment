@@ -5,6 +5,7 @@ import { Route, Switch } from 'react-router-dom';
 import { COLORS } from './chakra-setup';
 import { DashboardLayoutContainer } from './containers/dashboard';
 import {
+  AuthenticatedAccessContainer,
   ErrorBoundaryGenericContainerMemo,
   LocationTrackerContainerMemo,
   ScreenDetailsTrackerContainerMemo,
@@ -38,7 +39,9 @@ const App: FC = () => {
       >
         <Switch>
           <Route exact path={'/'}>
-            <DashboardLayoutContainer />
+            <AuthenticatedAccessContainer mustBe={'authenticated'} redirectLocation={'/'}>
+              <DashboardLayoutContainer />
+            </AuthenticatedAccessContainer>
           </Route>
           <Route path="/">
             <NotFoundContainerMemo />

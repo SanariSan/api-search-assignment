@@ -8,14 +8,16 @@ const constructApiUrl = (base: string) => (apiVersion: string) => (urlPath: stri
 const getApiUrl = constructApiUrl(process.env.REACT_APP_API_URL)(process.env.REACT_APP_API_VERSION);
 
 const STATIC_ROUTES = {
-  LOGIN: '/search/entity',
-  LOGOUT: '/search/entity_v2',
+  ENTITY: '/search/entity',
+  SESSION_INIT: '/access/session-init',
 };
 
 const ROUTES = {
   SEARCH: {
-    ENTITY: getApiUrl(STATIC_ROUTES.LOGIN),
-    ENTITY_V2: getApiUrl(STATIC_ROUTES.LOGOUT),
+    ENTITY: getApiUrl(STATIC_ROUTES.ENTITY),
+  },
+  ACCESS: {
+    SESSION_INIT: getApiUrl(STATIC_ROUTES.SESSION_INIT),
   },
 };
 

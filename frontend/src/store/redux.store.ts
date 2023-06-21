@@ -12,7 +12,7 @@ import {
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import createSagaMiddleware from 'redux-saga';
 import { rootWatcher } from './sagas';
-import { entities, loading, ui } from './slices';
+import { entities, loading, user, ui } from './slices';
 
 // advanced debugging template
 const sagaMiddleware = createSagaMiddleware({
@@ -55,6 +55,7 @@ const rootReducer = combineReducers({
   entities,
   ui,
   loading,
+  user,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -14,10 +14,16 @@ const loadingSlice = createSlice({
     ) {
       state.searchEntitiesLoadingStatus = action.payload.status;
     },
+    setUserAuthLoadingStatus(
+      state,
+      action: { payload: { status: TLoadingStatus; message?: string }; type: string },
+    ) {
+      state.userAuthLoadingStatus = action.payload.status;
+    },
   },
 });
 
 const loading = loadingSlice.reducer;
-const { setSearchEntitiesLoadingStatus } = loadingSlice.actions;
+const { setSearchEntitiesLoadingStatus, setUserAuthLoadingStatus } = loadingSlice.actions;
 
-export { loading, setSearchEntitiesLoadingStatus };
+export { loading, setSearchEntitiesLoadingStatus, setUserAuthLoadingStatus };

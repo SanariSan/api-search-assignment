@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
-import { loadingSearchEntitiesSelector, uiPathnameSelector } from '../../store';
+import {
+  loadingSearchEntitiesSelector,
+  loadingUserAuthSelector,
+  uiPathnameSelector,
+} from '../../store';
 import { useAppSelector } from '../redux';
 
 const useLoadingTracker = () => {
   const searchEntitiesLoadingStatus = useAppSelector(loadingSearchEntitiesSelector);
+  const userAuthLoadingStatus = useAppSelector(loadingUserAuthSelector);
   const [isLoading, setIsLoading] = useState(false);
 
   // path change fake loading just for UI consistency
@@ -19,12 +24,16 @@ const useLoadingTracker = () => {
 
   useEffect(() => {
     // || dashboardLoadingStatus === 'loading' || smthElse === true ...
-    if (searchEntitiesLoadingStatus === 'loading' || pageChangedLoading) {
+    if (
+      searchEntitiesLoadingStatus === 'loading' ||
+      userAuthLoadingStatus === 'loading' ||
+      pageChangedLoading
+    ) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
     }
-  }, [searchEntitiesLoadingStatus, pageChangedLoading]);
+  }, [searchEntitiesLoadingStatus, userAuthLoadingStatus, pageChangedLoading]);
 
   return { isLoading };
 };

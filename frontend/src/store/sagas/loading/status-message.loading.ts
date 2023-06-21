@@ -3,6 +3,7 @@ import {
   setErrorMessageUi,
   setSearchEntitiesLoadingStatus,
   setSuccessMessageUi,
+  setUserAuthLoadingStatus,
 } from '../../slices';
 import type { TLoadingStatus } from '../../slices/slices.type';
 
@@ -30,7 +31,7 @@ function* statusMessageWorker(action: {
 }
 
 function* loadingStatusWatcher() {
-  yield takeEvery([setSearchEntitiesLoadingStatus], statusMessageWorker);
+  yield takeEvery([setSearchEntitiesLoadingStatus, setUserAuthLoadingStatus], statusMessageWorker);
 }
 
 export { loadingStatusWatcher };
