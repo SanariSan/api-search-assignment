@@ -23,7 +23,7 @@ const SearchContainer: FC<TSearchContainer> = () => {
   const [currentVersion, setCurrentVersion] = useState<'v1' | 'v2'>('v1');
 
   const [formValues] = useState<TSearchFormValues>({
-    email: 'jams@gmail.com',
+    email: '',
     number: '',
   });
 
