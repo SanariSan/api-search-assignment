@@ -5,7 +5,13 @@ import type { TRequestNarrowed } from '../../../express.type';
 import { SuccessResponse } from '../../../responses';
 
 export const sessionInitCTR = (req: TRequestNarrowed, res: Response, next: NextFunction) => {
-  publishLog(ELOG_LEVEL.WARN, `Initialized session: ${req.session.id}`);
+  publishLog(ELOG_LEVEL.WARN, {
+    ts: new Date(),
+    ip: req.ip,
+    sessionId: req.session.id,
+    sessionData: req.session.user,
+    action: `Initialized session`,
+  });
   return new SuccessResponse({
     res,
     data: {},

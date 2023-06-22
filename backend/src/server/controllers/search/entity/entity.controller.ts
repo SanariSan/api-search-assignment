@@ -3,7 +3,7 @@ import { ELOG_LEVEL } from '../../../../general.type';
 import { SessionManager } from '../../../../helpers/session';
 import { ENTITIES } from '../../../../logic';
 import type { IPublishEntity } from '../../../../modules/access-layer/events/pubsub';
-import { Sub, publishCustom } from '../../../../modules/access-layer/events/pubsub';
+import { Sub, publishCustom, publishLog } from '../../../../modules/access-layer/events/pubsub';
 import type { TEntity, TRequestValidatedEntity } from '../../../express.type';
 import { AbortedErrorResponse, SuccessResponse } from '../../../responses';
 
@@ -22,11 +22,19 @@ const clearTimeoutCbWrap = ({ timeoutId }: { timeoutId: NodeJS.Timeout }) =>
   };
 
 // this will be fired on cleanup event and return an error for previous call
-const abortPrevReqCbWrap = ({ res }: { res: Response }) =>
+const abortPrevReqCbWrap = ({ req, res }: { req: TRequestValidatedEntity; res: Response }) =>
   function abortPrevReqCb({ channel }: IPublishEntity) {
     if (channel === 'cleanup') {
       // cleanup itself after fired
       sub.removeListener(abortPrevReqCb);
+
+      publishLog(ELOG_LEVEL.WARN, {
+        ts: new Date(),
+        ip: req.ip,
+        sessionId: req.session.id,
+        sessionData: req.session.user,
+        action: `Abort response hit`,
+      });
 
       // error response for previous call
       new AbortedErrorResponse({
@@ -54,6 +62,14 @@ const sendSuccessResponseCbWrap =
     req.session.user = {
       isProcessing: false,
     };
+
+    publishLog(ELOG_LEVEL.WARN, {
+      ts: new Date(),
+      ip: req.ip,
+      sessionId: req.session.id,
+      sessionData: req.session.user,
+      action: `Success response hit`,
+    });
 
     // update flag in session and return success response from closure
     void SessionManager.save({ session: req.session }).then(() => {
@@ -91,6 +107,15 @@ export const searchEntityCTR = async (
     return true;
   });
 
+  publishLog(ELOG_LEVEL.WARN, {
+    ts: new Date(),
+    ip: req.ip,
+    sessionId: req.session.id,
+    sessionData: req.session.user,
+    action: `Found entities`,
+    payload: filtered,
+  });
+
   const sendSuccessResponseCb = sendSuccessResponseCbWrap({ req, res, payload: filtered });
 
   // schedule (success response)
@@ -98,7 +123,7 @@ export const searchEntityCTR = async (
 
   // schedule (error response) + (planned success response cancellation)
   const clearTimeoutCb = clearTimeoutCbWrap({ timeoutId });
-  const abortPrevReqCb = abortPrevReqCbWrap({ res });
+  const abortPrevReqCb = abortPrevReqCbWrap({ req, res });
 
   sub.listen(abortPrevReqCb);
   sub.listen(clearTimeoutCb);
