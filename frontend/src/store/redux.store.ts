@@ -48,7 +48,7 @@ const sagaMiddleware = createSagaMiddleware({
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['ui', 'loading'],
+  blacklist: ['ui', 'loading', 'user'],
 };
 
 const rootReducer = combineReducers({
