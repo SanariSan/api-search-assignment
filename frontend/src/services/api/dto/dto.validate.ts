@@ -1,12 +1,12 @@
 import type { Schema, ValidationError } from 'yup';
 
-async function validateDTO<TSchema extends Schema>({
+async function validateDTO<TSchema extends Schema, TValue>({
   schema,
   value,
 }: {
   schema: TSchema;
-  value: unknown;
-}): Promise<TSchema['__outputType']> {
+  value: TValue;
+}) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await schema.validate(value, { abortEarly: false });

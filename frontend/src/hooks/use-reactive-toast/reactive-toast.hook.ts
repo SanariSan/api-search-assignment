@@ -17,7 +17,7 @@ export const useReactiveToast = ({
   const toast = useToast();
 
   useEffect(() => {
-    if (description === undefined) return;
+    if (title === undefined && description === undefined) return;
 
     toast({
       title,
