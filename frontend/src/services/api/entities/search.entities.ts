@@ -3,7 +3,7 @@ import { ELOG_LEVEL } from '../../../general.type';
 import { publishError } from '../../../modules/access-layer/events/pubsub';
 import { AbortError, InternalError } from '../../errors.services';
 import { request } from '../../request.services';
-import { validateDTO } from '../dto';
+import { classifyResponse } from '../classify-response.api';
 import type { TEntitiesSearchOutgoingFields } from '../dto/entities';
 import {
   EntitiesSearchIncomingFailureDTO,
@@ -27,29 +27,15 @@ export async function searchEntities({
       abortSignal,
     });
 
-    let parsedJsonResponse: unknown;
-    try {
-      parsedJsonResponse = await response.clone().json();
-    } catch {
-      parsedJsonResponse = await response.clone().text();
-    }
-
-    if (response.status > 100 && response.status < 400) {
-      return {
-        success: await validateDTO({
-          schema: EntitiesSearchIncomingSuccessDTO,
-          value: parsedJsonResponse,
-        }),
-      };
-    }
-
-    return {
-      failure: await validateDTO({
-        schema: EntitiesSearchIncomingFailureDTO,
-        value: parsedJsonResponse,
-      }),
-    };
+    // request came through successfully, parse it accordingly
+    return await classifyResponse({
+      response,
+      expectedSuccessDTO: EntitiesSearchIncomingSuccessDTO,
+      expectedFailureDTO: EntitiesSearchIncomingFailureDTO,
+    });
   } catch (error) {
+    // request failed, parse system error
+    // when more cases are encountered I'll move this to classifySystemError
     const eCast = error as Error;
     publishError(ELOG_LEVEL.DEBUG, eCast);
 

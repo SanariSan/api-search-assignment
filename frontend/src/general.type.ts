@@ -6,6 +6,10 @@ enum ELOG_LEVEL {
   SILLY,
 }
 
+type TAwaited<TPromised extends Promise<any>> = TPromised extends Promise<infer TAwaitedInferred>
+  ? TAwaitedInferred
+  : never;
+
 // deep modify if needed https://stackoverflow.com/a/65561287
 // /\ not working as expected, missing old object (TA) types, they become unknown, fixed version below
 // however still smth to notice, mapping modifiers (?:) from old object not overriden in new, even with Required<NonNullable<target>>
@@ -32,5 +36,5 @@ type TPrettify<TX> = {
 // type TC = TModifyDeep<TA, TB>;
 // const x: TC = { x: true, b: { c: { d: 'deep modified type' } } };
 
-export type { TModifyDeep, TPrettify };
+export type { TModifyDeep, TPrettify, TAwaited };
 export { ELOG_LEVEL };

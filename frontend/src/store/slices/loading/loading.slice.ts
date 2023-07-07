@@ -10,14 +10,11 @@ const loadingSlice = createSlice({
   reducers: {
     setSearchEntitiesLoadingStatus(
       state,
-      action: { payload: { status: TLoadingStatus; message?: string }; type: string },
+      action: { payload: { status: TLoadingStatus }; type: string },
     ) {
       state.searchEntitiesLoadingStatus = action.payload.status;
     },
-    setUserAuthLoadingStatus(
-      state,
-      action: { payload: { status: TLoadingStatus; message?: string }; type: string },
-    ) {
+    setUserAuthLoadingStatus(state, action: { payload: { status: TLoadingStatus }; type: string }) {
       state.userAuthLoadingStatus = action.payload.status;
     },
   },

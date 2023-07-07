@@ -18,5 +18,8 @@
 		"clean-cache": "yarn cache clean",
 		"install-backend-offline": "yarn --cwd ./backend install --offline",
 		"install-frontend-offline": "yarn --cwd ./frontend install --offline"
+	},
+	"devDependencies": {
+		"typescript": "<4.5.0"
 	}
 }
